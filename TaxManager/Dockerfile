@@ -6,11 +6,15 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+ARG PASSWORD_ENV_SEEDED
+
+RUN dotnet dev-certs https -ep /https/aspnetapp.pfx -p ${PASSWORD_ENV_SEEDED}
+
 WORKDIR /src
-COPY ["TaxManager/TaxManager.csproj", "TaxManager/"]
-RUN dotnet restore "TaxManager/TaxManager.csproj"
+COPY ["TaxManager.csproj", "."]
+RUN dotnet restore "./TaxManager.csproj"
 COPY . .
-WORKDIR "/src/TaxManager"
+WORKDIR "/src/."
 RUN dotnet build "TaxManager.csproj" -c Release -o /app/build
 
 FROM build AS publish
@@ -18,5 +22,6 @@ RUN dotnet publish "TaxManager.csproj" -c Release -o /app/publish /p:UseAppHost=
 
 FROM base AS final
 WORKDIR /app
+COPY --from=build /https/* /https/
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "TaxManager.dll"]

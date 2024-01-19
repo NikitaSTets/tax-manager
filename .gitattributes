@@ -1,0 +1,3 @@
+#eol
+nuget-config-generator eol=lf
+*.sh eol=lf
