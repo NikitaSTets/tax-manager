@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaxManager.Extensions;
 using TaxManager.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,13 +13,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TaxContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TaxDb")));
 
+builder.Services.AddDBExtensions();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var salesContext = scope.ServiceProvider.GetRequiredService<TaxContext>();
-    salesContext.Database.EnsureCreated();
+    await salesContext.Database.EnsureCreatedAsync();
     salesContext.Seed();
 }
 

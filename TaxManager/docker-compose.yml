@@ -2,8 +2,8 @@ version: "3.9"  # optional since v1.27.0
 services:
   web_api:
     build:
-       context: .
-       dockerfile: Dockerfile
+       context: ../
+       dockerfile: ./TaxManager/Dockerfile
        args:
         - PASSWORD_ENV_SEEDED=password
 

@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxManager", "TaxManager\TaxManager.csproj", "{04B3962F-DF45-473E-B909-7091C4A1A4A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxManager", "TaxManager\TaxManager.csproj", "{04B3962F-DF45-473E-B909-7091C4A1A4A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{35F58CB6-AF69-40F5-BDA6-D86E281C5B84}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.TaxDb", "Data\EFCore.TaxDb.csproj", "{A842B380-8CF8-496B-999E-F7326243946A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitOfWork", "UnitOfWork\UnitOfWork.csproj", "{F6843B70-D193-4AEB-B88B-17BCFE0C71DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,21 @@ Global
 		{04B3962F-DF45-473E-B909-7091C4A1A4A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04B3962F-DF45-473E-B909-7091C4A1A4A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04B3962F-DF45-473E-B909-7091C4A1A4A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A842B380-8CF8-496B-999E-F7326243946A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A842B380-8CF8-496B-999E-F7326243946A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A842B380-8CF8-496B-999E-F7326243946A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A842B380-8CF8-496B-999E-F7326243946A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6843B70-D193-4AEB-B88B-17BCFE0C71DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6843B70-D193-4AEB-B88B-17BCFE0C71DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6843B70-D193-4AEB-B88B-17BCFE0C71DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6843B70-D193-4AEB-B88B-17BCFE0C71DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A842B380-8CF8-496B-999E-F7326243946A} = {35F58CB6-AF69-40F5-BDA6-D86E281C5B84}
+		{F6843B70-D193-4AEB-B88B-17BCFE0C71DD} = {35F58CB6-AF69-40F5-BDA6-D86E281C5B84}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6953B8EE-11D9-4600-BB8C-6C78B506042C}

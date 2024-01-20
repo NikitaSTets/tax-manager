@@ -11,14 +11,17 @@ ARG PASSWORD_ENV_SEEDED
 RUN dotnet dev-certs https -ep /https/aspnetapp.pfx -p ${PASSWORD_ENV_SEEDED}
 
 WORKDIR /src
-COPY ["TaxManager.csproj", "."]
+COPY ["TaxManager/TaxManager.csproj", "."]
+COPY ["Data/EFCore.TaxDb.csproj", "Data/"]
+COPY ["UnitOfWork/UnitOfWork.csproj", "Data/"]
+
 RUN dotnet restore "./TaxManager.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "TaxManager.csproj" -c Release -o /app/build
+RUN dotnet build "TaxManager/TaxManager.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TaxManager.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "TaxManager/TaxManager.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
