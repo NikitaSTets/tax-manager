@@ -4,5 +4,5 @@ public interface ITaxUnitOfWork
 {
     IRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
 
-    public void Save();
+    Task SaveAsync();
 }

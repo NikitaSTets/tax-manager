@@ -16,9 +16,9 @@ public class TaxUnitOfWork : ITaxUnitOfWork
         _repositories = new Dictionary<Type, object>();
     }
 
-    public void Save()
+    public async Task SaveAsync()
     {
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
     public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
