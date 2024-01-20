@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaxManager;
 using TaxManager.Extensions;
 using TaxManager.Models;
 
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TaxContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TaxDb")));
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 builder.Services.AddDBExtensions();
 
