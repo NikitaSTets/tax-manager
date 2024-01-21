@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Services.Interfaces;
 using TaxManager.Contants;
-using UnitOfWork.Interfaces;
 
 namespace TaxManager.Controllers;
 
@@ -9,21 +9,34 @@ namespace TaxManager.Controllers;
 [Route("api/city")]
 public class CityController : ControllerBase
 {
-    private readonly ITaxUnitOfWork _taxUnitOfWork;
+    private readonly ILogger<CityController> _logger;
+    private readonly ICityService _cityService;
+    private readonly ITaxRuleService _taxRuleService;
 
 
-    public CityController(ILogger<CityController> logger, ITaxUnitOfWork taxUnitOfWork)
+    public CityController(ILogger<CityController> logger, ICityService cityService, ITaxRuleService taxRuleService)
     {
-        _taxUnitOfWork = taxUnitOfWork;
+        _logger = logger;
+        _cityService = cityService;
+        _taxRuleService = taxRuleService;
     }
 
-    [HttpGet("", Name = "GetCities")]
-    public async Task<IEnumerable<City>> Get()
-    {
-        var cityRepository = _taxUnitOfWork.GetRepository<City>();
-        var cities = await cityRepository.GetAllAsync();
 
-        return cities;
+    [HttpGet("", Name = "GetCities")]
+    public async Task<ActionResult<IEnumerable<City>>> Get()
+    {
+        try
+        {
+            var cities = await _cityService.GetAllAsync();
+
+            return Ok(cities);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get Cities");
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id}/taxes", Name = "Get City Taxes")]
@@ -32,11 +45,30 @@ public class CityController : ControllerBase
         [FromHeader(Name = Headers.RoleHeaderName)] Roles role,
         [FromQuery] DateTime? date)
     {
-        var taxRulesRepository = _taxUnitOfWork.GetRepository<TaxRule>();
-        var cityTaxRules = date.HasValue
-            ? await taxRulesRepository.FindByCondition(tax => tax.CityId == id && tax.ToDate >= date && tax.FromDate <= date)
-            : await taxRulesRepository.FindByCondition(tax => tax.CityId == id);
+        try
+        {
+            var city = await _cityService.GetByIdAsync(id);
+            if (city == null)
+            {
+                return BadRequest();
+            }
 
-        return Ok(cityTaxRules);
+            if (date.HasValue)
+            {
+                var taxRule = await _taxRuleService.GetCityTaxRuleByDate(id, date.Value);
+
+                return Ok(taxRule);
+            }
+
+            var cityTaxRules = await _taxRuleService.GetWhereAsync(tax => tax.CityId == id);
+
+            return Ok(cityTaxRules);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get Cities");
+
+            return BadRequest();
+        }
     }
 }

@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Data\EFCore.TaxDb.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
     <ProjectReference Include="..\UnitOfWork\UnitOfWork.csproj" />
   </ItemGroup>
 

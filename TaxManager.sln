@@ -9,9 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{35F58CB6-A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore.TaxDb", "Data\EFCore.TaxDb.csproj", "{A842B380-8CF8-496B-999E-F7326243946A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitOfWork", "UnitOfWork\UnitOfWork.csproj", "{F6843B70-D193-4AEB-B88B-17BCFE0C71DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitOfWork", "UnitOfWork\UnitOfWork.csproj", "{F6843B70-D193-4AEB-B88B-17BCFE0C71DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxManager.UnitTests", "TaxManager.UnitTests\TaxManager.UnitTests.csproj", "{5BE71481-8253-4137-ABBB-C8ECD73BD866}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxManager.UnitTests", "TaxManager.UnitTests\TaxManager.UnitTests.csproj", "{5BE71481-8253-4137-ABBB-C8ECD73BD866}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{8C15E305-D8F2-4909-A0CE-C1E95DD1EE98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{5BE71481-8253-4137-ABBB-C8ECD73BD866}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BE71481-8253-4137-ABBB-C8ECD73BD866}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BE71481-8253-4137-ABBB-C8ECD73BD866}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C15E305-D8F2-4909-A0CE-C1E95DD1EE98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C15E305-D8F2-4909-A0CE-C1E95DD1EE98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C15E305-D8F2-4909-A0CE-C1E95DD1EE98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C15E305-D8F2-4909-A0CE-C1E95DD1EE98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +48,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A842B380-8CF8-496B-999E-F7326243946A} = {35F58CB6-AF69-40F5-BDA6-D86E281C5B84}
 		{F6843B70-D193-4AEB-B88B-17BCFE0C71DD} = {35F58CB6-AF69-40F5-BDA6-D86E281C5B84}
+		{8C15E305-D8F2-4909-A0CE-C1E95DD1EE98} = {35F58CB6-AF69-40F5-BDA6-D86E281C5B84}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6953B8EE-11D9-4600-BB8C-6C78B506042C}

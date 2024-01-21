@@ -1,9 +1,11 @@
-﻿namespace Models;
+﻿using EFCore.TaxDb.Models;
+
+namespace Models;
 
 public class TaxRule
 {
     public int Id { get; set; }
-    
+
     public int CityId { get; set; }
 
     public DateTime FromDate { get; set; }
@@ -11,4 +13,6 @@ public class TaxRule
     public DateTime ToDate { get; set; }
 
     public double Tax { get; set; }
+
+    public TaxRuleType Type { get; set; }
 }

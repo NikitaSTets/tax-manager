@@ -1,4 +1,5 @@
-﻿using TaxManager.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using TaxManager.Models;
 using UnitOfWork.Interfaces;
 using UnitOfWork.Repositories;
 
@@ -10,9 +11,9 @@ public class TaxUnitOfWork : ITaxUnitOfWork
     private Dictionary<Type, object> _repositories;
 
 
-    public TaxUnitOfWork(TaxContext taxContext)
+    public TaxUnitOfWork(IDbContextFactory<TaxContext> taxContextFactory)
     {
-        _context = taxContext;
+        _context = taxContextFactory.CreateDbContext();
         _repositories = new Dictionary<Type, object>();
     }
 

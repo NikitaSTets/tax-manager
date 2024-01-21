@@ -4,9 +4,9 @@ using Models;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
+using Services.Interfaces;
 using TaxManager.Contants;
 using TaxManager.Controllers;
-using UnitOfWork.Interfaces;
 
 namespace TaxManager.UnitTests.Controllers;
 
@@ -15,18 +15,18 @@ public class TaxRulesControllerUnitTests
 {
     private TaxRuleController _controller = default!;
     private ILogger<TaxRuleController> _logger = default!;
-    private ITaxUnitOfWork _taxUnitOfWork = default!;
+    private ITaxRuleService _taxRuleService = default!;
     private IAuthenticationService _authenticationService = default!;
 
 
     [SetUp]
     public void BeforeEveryTest()
     {
-        _taxUnitOfWork = Substitute.For<ITaxUnitOfWork>();
         _logger = Substitute.For<ILogger<TaxRuleController>>();
         _authenticationService = new AuthenticationService();
+        _taxRuleService = Substitute.For<ITaxRuleService>();
 
-        _controller = new TaxRuleController(_logger, _taxUnitOfWork, _authenticationService);
+        _controller = new TaxRuleController(_logger, _taxRuleService, _authenticationService);
     }
 
     #region GetTaxRules
@@ -38,9 +38,8 @@ public class TaxRulesControllerUnitTests
             new TaxRule() { Id = 1, CityId = 1},
             new TaxRule() { Id = 2, CityId = 1}
         };
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        repository.GetAllAsync().Returns(taxRules);
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
+
+        _taxRuleService.GetAllAsync().Returns(taxRules);
 
         var result = await _controller.Get(Roles.Admin);
 
@@ -65,9 +64,7 @@ public class TaxRulesControllerUnitTests
             new TaxRule() { Id = 1, CityId = 1},
             new TaxRule() { Id = 2, CityId = 1}
         };
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        repository.GetAllAsync().Returns(taxRules);
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
+        _taxRuleService.GetAllAsync().Returns(taxRules);
 
         var result = await _controller.Get(Roles.User);
 
@@ -78,9 +75,7 @@ public class TaxRulesControllerUnitTests
     [Test]
     public async Task GetTaxRules_Failed()
     {
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-        repository.GetAllAsync().ThrowsAsync(new Exception());
+        _taxRuleService.GetAllAsync().ThrowsAsync(new Exception());
 
         var result = await _controller.Get(Roles.Admin);
 
@@ -96,12 +91,10 @@ public class TaxRulesControllerUnitTests
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
 
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-
         var result = await _controller.Create(Roles.Admin, taxRule);
         var actual = result as OkResult;
 
+        await _taxRuleService.Received(1).AddAsync(taxRule);
         Assert.That(actual, Is.Not.Null);
     }
 
@@ -110,11 +103,9 @@ public class TaxRulesControllerUnitTests
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
 
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-
         var result = await _controller.Create(Roles.User, taxRule);
         var actual = result as UnauthorizedResult;
+        await _taxRuleService.Received(0).AddAsync(taxRule);
 
         Assert.That(actual, Is.Not.Null);
     }
@@ -123,12 +114,11 @@ public class TaxRulesControllerUnitTests
     public async Task CreateTaxRule_Failed()
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
-
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Throws(new Exception());
+        _taxRuleService.AddAsync(taxRule).Throws(new Exception());
 
         var result = await _controller.Create(Roles.Admin, taxRule);
         var actual = result as BadRequestResult;
+        await _taxRuleService.Received(1).AddAsync(taxRule);
 
         Assert.That(actual, Is.Not.Null);
     }
@@ -143,12 +133,9 @@ public class TaxRulesControllerUnitTests
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
 
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-        repository.GetByIdAsync(taxRule.Id).Returns(taxRule);
-
         var result = await _controller.Update(Roles.Admin, taxRule);
         var actual = result as OkResult;
+        await _taxRuleService.Received(1).UpdateAsync(taxRule);
 
         Assert.That(actual, Is.Not.Null);
     }
@@ -158,11 +145,10 @@ public class TaxRulesControllerUnitTests
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
 
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-
         var result = await _controller.Update(Roles.User, taxRule);
         var actual = result as UnauthorizedResult;
+
+        await _taxRuleService.Received(0).UpdateAsync(taxRule);
 
         Assert.That(actual, Is.Not.Null);
     }
@@ -172,26 +158,15 @@ public class TaxRulesControllerUnitTests
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
 
-        _taxUnitOfWork.GetRepository<TaxRule>().Throws(new Exception());
+        _taxRuleService.UpdateAsync(taxRule).Throws(new Exception());
 
         var result = await _controller.Update(Roles.Admin, taxRule);
         var actual = result as BadRequestResult;
+        await _taxRuleService.Received(1).UpdateAsync(taxRule);
 
         Assert.That(actual, Is.Not.Null);
     }
 
-    [Test]
-    public async Task UpdateTaxRule_If_Not_Found_Failed()
-    {
-        var taxRule = new TaxRule() { Id = 2, CityId = 1 };
-
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-        var result = await _controller.Update(Roles.Admin, taxRule);
-        var actual = result as BadRequestResult;
-
-        Assert.That(actual, Is.Not.Null);
-    }
     #endregion
 
     #region DeleteTaxRule
@@ -199,11 +174,10 @@ public class TaxRulesControllerUnitTests
     [Test]
     public async Task DeleteTaxRule_If_Not_Found_Successfully()
     {
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-
-        var result = await _controller.Delete(Roles.Admin, 2);
+        var id = 2;
+        var result = await _controller.Delete(Roles.Admin, id);
         var actual = result as OkResult;
+        await _taxRuleService.Received(1).DeleteAsync(id);
 
         Assert.That(actual, Is.Not.Null);
     }
@@ -211,14 +185,10 @@ public class TaxRulesControllerUnitTests
     [Test]
     public async Task DeleteTaxRule_If_Found_Successfully()
     {
-        var taxRule = new TaxRule() { Id = 2, CityId = 1 };
-
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-        repository.GetByIdAsync(taxRule.Id).Returns(taxRule);
-
-        var result = await _controller.Delete(Roles.Admin, 2);
+        var id = 2;
+        var result = await _controller.Delete(Roles.Admin, id);
         var actual = result as OkResult;
+        await _taxRuleService.Received(1).DeleteAsync(id);
 
         Assert.That(actual, Is.Not.Null);
     }
@@ -228,11 +198,9 @@ public class TaxRulesControllerUnitTests
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
 
-        var repository = Substitute.For<IRepository<TaxRule>>();
-        _taxUnitOfWork.GetRepository<TaxRule>().Returns(repository);
-
         var result = await _controller.Delete(Roles.User, taxRule.Id);
         var actual = result as UnauthorizedResult;
+        await _taxRuleService.Received(0).DeleteAsync(taxRule.Id);
 
         Assert.That(actual, Is.Not.Null);
     }
@@ -242,10 +210,11 @@ public class TaxRulesControllerUnitTests
     {
         var taxRule = new TaxRule() { Id = 2, CityId = 1 };
 
-        _taxUnitOfWork.GetRepository<TaxRule>().Throws(new Exception());
+        _taxRuleService.DeleteAsync(taxRule.Id).Throws(new Exception());
 
         var result = await _controller.Delete(Roles.Admin, taxRule.Id);
         var actual = result as BadRequestResult;
+        await _taxRuleService.Received(1).DeleteAsync(taxRule.Id);
 
         Assert.That(actual, Is.Not.Null);
     }

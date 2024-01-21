@@ -14,6 +14,7 @@ WORKDIR /src
 COPY ["TaxManager/TaxManager.csproj", "."]
 COPY ["Data/EFCore.TaxDb.csproj", "Data/"]
 COPY ["UnitOfWork/UnitOfWork.csproj", "Data/"]
+COPY ["Services/Services.csproj", "Data/"]
 
 RUN dotnet restore "./TaxManager.csproj"
 COPY . .

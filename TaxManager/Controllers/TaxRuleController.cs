@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models;
+using Services.Interfaces;
 using TaxManager.Contants;
-using UnitOfWork.Interfaces;
 
 namespace TaxManager.Controllers;
 
@@ -10,17 +10,17 @@ namespace TaxManager.Controllers;
 public class TaxRuleController : ControllerBase
 {
     private readonly ILogger<TaxRuleController> _logger;
-    private readonly ITaxUnitOfWork _taxUnitOfWork;
     private readonly IAuthenticationService _authenticationService;
+    private readonly ITaxRuleService _taxRuleService;
 
 
     public TaxRuleController(
         ILogger<TaxRuleController> logger,
-        ITaxUnitOfWork taxUnitOfWork,
+        ITaxRuleService taxRuleService,
         IAuthenticationService authenticationService)
     {
         _logger = logger;
-        _taxUnitOfWork = taxUnitOfWork;
+        _taxRuleService = taxRuleService;
         _authenticationService = authenticationService;
     }
 
@@ -36,8 +36,7 @@ public class TaxRuleController : ControllerBase
                 return Unauthorized();
             }
 
-            var taxRuleRepository = _taxUnitOfWork.GetRepository<TaxRule>();
-            var taxRules = await taxRuleRepository.GetAllAsync();
+            var taxRules = await _taxRuleService.GetAllAsync();
 
             return Ok(taxRules);
         }
@@ -61,10 +60,7 @@ public class TaxRuleController : ControllerBase
             {
                 return Unauthorized();
             }
-
-            var taxRuleRepository = _taxUnitOfWork.GetRepository<TaxRule>();
-            taxRuleRepository.Add(taxRule);
-            await _taxUnitOfWork.SaveAsync();
+            await _taxRuleService.AddAsync(taxRule);
 
             return Ok();
         }
@@ -88,21 +84,14 @@ public class TaxRuleController : ControllerBase
             {
                 return Unauthorized();
             }
-            var taxRuleRepository = _taxUnitOfWork.GetRepository<TaxRule>();
-            var taxRuleDb = await taxRuleRepository.GetByIdAsync(taxRule.Id);
-            if (taxRuleDb is null)
-            {
-                return BadRequest();
-            }
 
-            taxRuleRepository.Update(taxRule);
-            await _taxUnitOfWork.SaveAsync();
+            await _taxRuleService.UpdateAsync(taxRule);
 
             return Ok();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Create Rules is failed");
+            _logger.LogError(ex, "Create Rule is failed");
 
             return BadRequest();
         }
@@ -121,15 +110,7 @@ public class TaxRuleController : ControllerBase
                 return Unauthorized();
             }
 
-            var taxRuleRepository = _taxUnitOfWork.GetRepository<TaxRule>();
-            var taxRule = await taxRuleRepository.GetByIdAsync(id);
-            if (taxRule is null)
-            {
-                return Ok();
-            }
-            taxRuleRepository.Delete(id);
-
-            await _taxUnitOfWork.SaveAsync();
+            await _taxRuleService.DeleteAsync(id);
 
             return Ok();
         }
