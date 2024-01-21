@@ -31,9 +31,10 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var salesContext = scope.ServiceProvider.GetRequiredService<TaxContext>();
-    await salesContext.Database.EnsureCreatedAsync();
-    salesContext.Seed();
+    var taxContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<TaxContext>>();
+    var taxContext = await taxContextFactory.CreateDbContextAsync();
+    await taxContext.Database.EnsureCreatedAsync();
+    taxContext.Seed();
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

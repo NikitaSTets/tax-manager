@@ -13,8 +13,8 @@ RUN dotnet dev-certs https -ep /https/aspnetapp.pfx -p ${PASSWORD_ENV_SEEDED}
 WORKDIR /src
 COPY ["TaxManager/TaxManager.csproj", "."]
 COPY ["Data/EFCore.TaxDb.csproj", "Data/"]
-COPY ["UnitOfWork/UnitOfWork.csproj", "Data/"]
-COPY ["Services/Services.csproj", "Data/"]
+COPY ["UnitOfWork/UnitOfWork.csproj", "UnitOfWork/"]
+COPY ["Services/Services.csproj", "Services/"]
 
 RUN dotnet restore "./TaxManager.csproj"
 COPY . .
