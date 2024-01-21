@@ -36,6 +36,7 @@ using (var scope = app.Services.CreateScope())
     salesContext.Seed();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
