@@ -50,7 +50,7 @@ public class CityController : ControllerBase
             var city = await _cityService.GetByIdAsync(id);
             if (city == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             if (date.HasValue)

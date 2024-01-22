@@ -86,8 +86,17 @@ public class CityControllerUnitTests
 
         _taxRuleService.GetCityTaxRuleByDate(Arg.Is(cityId), Arg.Is(dateTime)).Returns(taxRuleResult);
         var result = await _controller.GetCityTaxes(cityId, role, dateTime);
-        var actual = (result.Result as OkObjectResult).Value as TaxRule;
+        var actual = (result.Result as OkObjectResult).Value as IEnumerable<TaxRule>;
 
         Assert.That(actual, Is.EqualTo(taxRuleResult));
+    }
+
+    [Test]
+    public async Task GetCityTaxes_Failed([Values] Roles role)
+    {
+        var cityId = 1;
+        var result = await _controller.GetCityTaxes(cityId, role, default);
+        var actual = result.Result as NotFoundResult;
+        Assert.That(actual, Is.Not.Null);
     }
 }
