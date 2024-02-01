@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Services;
 using Services.Interfaces;
 using System.Text.Json.Serialization;
@@ -33,7 +35,12 @@ using (var scope = app.Services.CreateScope())
 {
     var taxContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<TaxContext>>();
     var taxContext = await taxContextFactory.CreateDbContextAsync();
-    await taxContext.Database.EnsureCreatedAsync();
+    var isExist = taxContext.GetService<IDatabaseCreator>().CanConnect();
+    if (!isExist)
+    {
+        await taxContext.Database.EnsureCreatedAsync();
+    }
+
     taxContext.Seed();
 }
 
